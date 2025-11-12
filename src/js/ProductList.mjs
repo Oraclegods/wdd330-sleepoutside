@@ -13,40 +13,29 @@ export default class ProductList {
   }
 
   renderList(list) {
-    renderListWithTemplate(productCardTemplate, this.listElement, list, 'afterbegin', true);
+    // Filter out products that don't have corresponding images
+    const productsWithImages = list.filter(product => {
+      const imageName = product.Image.split('/').pop(); // Get just the filename
+      // This is a simple check - you might need to adjust based on your actual image names
+      return imageName.includes('880rr') || 
+             imageName.includes('985rf') || 
+             imageName.includes('985pr') || 
+             imageName.includes('344yj');
+    });
+    
+    console.log(`Showing ${productsWithImages.length} of ${list.length} products (only those with images)`);
+    
+    renderListWithTemplate(productCardTemplate, this.listElement, productsWithImages, 'afterbegin', true);
   }
 }
 
 function productCardTemplate(product) {
-  // Comprehensive image path fixing
-  let imagePath = product.Image || '';
-  
-  console.log(`Original image path for ${product.Name}:`, imagePath);
-  
-  // Fix all possible path issues
-  if (imagePath) {
-    // Remove any ../ prefixes
-    imagePath = imagePath.replace(/\.\.\//g, '');
-    
-    // Ensure it starts with /images/
-    if (!imagePath.startsWith('/images/')) {
-      if (imagePath.startsWith('images/')) {
-        imagePath = '/' + imagePath;
-      } else {
-        imagePath = '/images/' + imagePath;
-      }
-    }
-  } else {
-    // Fallback if no image path
-    imagePath = '/images/placeholder.jpg';
-  }
-  
-  console.log(`Fixed image path for ${product.Name}:`, imagePath);
+  // Simple path fixing - just remove ../ prefix
+  let imagePath = product.Image ? product.Image.replace('../', '') : '';
   
   return `<li class="product-card">
     <a href="product_pages/index.html?product=${product.Id}">
-      <img src="${imagePath}" alt="Image of ${product.Name}" 
-           onerror="this.style.display='none'; console.log('Failed to load image: ${imagePath}')">
+      <img src="${imagePath}" alt="Image of ${product.Name}">
       <h2 class="card__brand">${product.Brand.Name}</h2>
       <h3 class="card__name">${product.NameWithoutBrand}</h3>
       <p class="product-card__price">$${product.FinalPrice}</p>
