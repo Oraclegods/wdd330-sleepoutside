@@ -8,86 +8,86 @@ export default class ProductDetails {
   }
 
   async init() {
-    // Get product details before rendering
-    this.product = await this.dataSource.findProductById(this.productId);
-    
-    // Render the product details
-    this.renderProductDetails();
-    
-    // Add event listener to Add to Cart button
-    document.getElementById('addToCart')
-      .addEventListener('click', this.addToCart.bind(this));
+    try {
+      // Get product details from API
+      this.product = await this.dataSource.findProductById(this.productId);
+      console.log('Product details loaded:', this.product);
+      
+      // Render the product details
+      this.renderProductDetails();
+      
+      // Add event listener to Add to Cart button
+      const addToCartBtn = document.getElementById('addToCart');
+      if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', this.addToCart.bind(this));
+      }
+    } catch (error) {
+      console.error('Error initializing product details:', error);
+    }
   }
 
   addToCart() {
-    let cart = getLocalStorage('so-cart');
-    if (!cart || !Array.isArray(cart)) {
+    let cart = getLocalStorage('so-cart') || [];
+    if (!Array.isArray(cart)) {
       cart = []; // Ensure it's always an array
     }
     cart.push(this.product);
     setLocalStorage('so-cart', cart);
+    console.log('Product added to cart:', this.product.Name);
   }
 
   renderProductDetails() {
-
-     console.log('Starting renderProductDetails...');
-     console.log('Product data:', this.product);
-    // === FIX: CLEAR EXISTING CONTENT FIRST ===
-    // Clear text content of all elements that will be updated
-    const selectorsToClear = [
-      '.breadcrumb li:last-child',
-      '.product-detail__name', 
-      '.product-detail__brand',
-      '.product-detail__price',
-      '.product-detail__description'
-    ];
-    
-    
-    selectorsToClear.forEach(selector => {
-      const element = document.querySelector(selector);
-      if (element) {
-        element.textContent = '';
-      }
-    });
-
-    // Now update with dynamic product data
-    document.title = `${this.product.NameWithoutBrand} - Sleep Outside`;
-    
-    // Update breadcrumb
-    const breadcrumb = document.querySelector('.breadcrumb li:last-child');
-    if (breadcrumb) {
-      breadcrumb.textContent = this.product.NameWithoutBrand;
+    if (!this.product) {
+      console.error('No product data to render');
+      return;
     }
+
+    console.log('Rendering product details...');
+
+    // Update page title
+    document.title = `Sleep Outside | ${this.product.NameWithoutBrand || this.product.Name}`;
     
-    // Update product image
-    const productImage = document.querySelector('.product-detail__image img');
-    if (productImage) {
-      productImage.src = this.product.Images.PrimaryLarge;
-      productImage.alt = this.product.NameWithoutBrand;
+    // Update product brand
+    const productBrand = document.getElementById('product-brand');
+    if (productBrand) {
+      productBrand.textContent = this.product.Brand?.Name || '';
     }
     
     // Update product name
-    const productName = document.querySelector('.product-detail__name');
+    const productName = document.getElementById('product-name');
     if (productName) {
-      productName.textContent = this.product.NameWithoutBrand;
+      productName.textContent = this.product.NameWithoutBrand || this.product.Name;
     }
     
-    // Update product brand
-    const productBrand = document.querySelector('.product-detail__brand');
-    if (productBrand) {
-      productBrand.textContent = this.product.Brand.Name;
+    // Update product image - Use PrimaryLarge for detail page
+    const productImage = document.getElementById('product-image');
+    if (productImage) {
+      productImage.src = this.product.Images?.PrimaryLarge || '/images/placeholder.jpg';
+      productImage.alt = this.product.Name;
     }
     
     // Update product price
-    const productPrice = document.querySelector('.product-detail__price');
+    const productPrice = document.getElementById('product-price');
     if (productPrice) {
       productPrice.textContent = `$${this.product.FinalPrice}`;
     }
     
+    // Update product color
+    const productColor = document.getElementById('product-color');
+    if (productColor) {
+      productColor.textContent = this.product.Colors?.[0]?.ColorName || '';
+    }
+    
     // Update product description
-    const productDescription = document.querySelector('.product-detail__description');
+    const productDescription = document.getElementById('product-description');
     if (productDescription) {
-      productDescription.innerHTML = this.product.DescriptionHtmlSimple;
+      productDescription.innerHTML = this.product.DescriptionHtmlSimple || '';
+    }
+    
+    // Update add to cart button data-id
+    const addToCartBtn = document.getElementById('addToCart');
+    if (addToCartBtn) {
+      addToCartBtn.dataset.id = this.product.Id;
     }
   }
 }

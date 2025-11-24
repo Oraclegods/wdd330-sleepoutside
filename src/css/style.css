@@ -261,3 +261,41 @@ footer {
   font-size: var(--small-font);
   padding: 1em;
 }
+
+
+
+
+
+.categories {
+  padding: 2rem;
+  text-align: center;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.category-card {
+  display: block;
+  padding: 1rem;
+  border: 1px solid var(--light-grey);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--dark-grey);
+  transition: transform 0.2s;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.category-card img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 0.5rem;
+}
