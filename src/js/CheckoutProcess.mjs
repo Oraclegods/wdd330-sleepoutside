@@ -115,7 +115,15 @@ export default class CheckoutProcess {
       return response;
     } catch (error) {
       console.error('Checkout failed:', error);
-      throw error;
+      
+      // Handle different types of errors
+      if (error.name === 'servicesError') {
+        // Server returned an error with details
+        throw new Error(`Server Error: ${JSON.stringify(error.message)}`);
+      } else {
+        // Network or other error
+        throw new Error(`Checkout failed: ${error.message}`);
+      }
     }
   }
 
@@ -140,68 +148,52 @@ export default class CheckoutProcess {
     event.preventDefault();
     const form = event.target;
     
+    // Check form validity
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return; // Stop if form is invalid
+    }
+    
     // Convert form data to JSON
     const formData = this.formDataToJSON(form);
     
-    // Validate form
-    if (!this.validateForm(formData)) {
-      alert('Please fill out all required fields correctly.');
-      return;
-    }
-    
     try {
       const response = await this.checkout(formData);
-      alert('Order submitted successfully!');
       
-      // Clear cart on success
+      // SUCCESS: Clear cart and redirect
       localStorage.removeItem('so-cart');
+      window.location.href = '/checkout/success.html';
       
-      // You can redirect to a confirmation page here
-      // window.location.href = '/order-confirmation.html';
-      
-      console.log('Order response:', response);
-      return response;
     } catch (error) {
       console.error('Checkout error:', error);
-      alert(`Error submitting order: ${error.message}. Please try again.`);
+      
+      // Show error message to user
+      this.showErrorMessage(error.message);
     }
   }
 
-  validateForm(formData) {
-    // Check all required fields are filled
-    const requiredFields = ['fname', 'lname', 'street', 'city', 'state', 'zip', 'cardNumber', 'expiration', 'code'];
+  showErrorMessage(message) {
+    // Create error message element
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.innerHTML = `
+      <p>❌ ${message}</p>
+      <button class="close-error">×</button>
+    `;
     
-    for (const field of requiredFields) {
-      if (!formData[field] || formData[field].trim() === '') {
-        console.error(`Missing required field: ${field}`);
-        return false;
-      }
-    }
+    // Add close functionality
+    errorDiv.querySelector('.close-error').addEventListener('click', () => {
+      errorDiv.remove();
+    });
     
-    // Validate zip code (5 digits)
-    if (!/^\d{5}$/.test(formData.zip)) {
-      console.error('Invalid zip code');
-      return false;
-    }
+    // Insert at top of form
+    const form = document.getElementById('checkoutForm');
+    form.parentNode.insertBefore(errorDiv, form);
     
-    // Validate card number (16 digits)
-    if (!/^\d{16}$/.test(formData.cardNumber)) {
-      console.error('Invalid card number');
-      return false;
-    }
-    
-    // Validate expiration (MM/YY)
-    if (!/^\d{2}\/\d{2}$/.test(formData.expiration)) {
-      console.error('Invalid expiration date');
-      return false;
-    }
-    
-    // Validate security code (3 digits)
-    if (!/^\d{3}$/.test(formData.code)) {
-      console.error('Invalid security code');
-      return false;
-    }
-    
-    return true;
+    // Scroll to top to show error
+    window.scrollTo(0, 0);
   }
+
+  // NOTE: Removed the old validateForm method since we're now using HTML5 validation
+  // via form.checkValidity() and form.reportValidity()
 }

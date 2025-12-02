@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sleep Outside | Order Confirmation</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <header class="divider" id="main-header"></header>
+
+    <main class="divider">
+      <div class="success-container">
+        <div class="success-icon">✅</div>
+        <h1>Order Confirmed!</h1>
+        <p>Thank you for your purchase. Your order has been successfully processed.</p>
+        <p>You will receive a confirmation email shortly.</p>
+        <div class="success-actions">
+          <a href="/" class="btn-primary">Continue Shopping</a>
+          <a href="/cart/index.html" class="btn-secondary">View Order Details</a>
+        </div>
+      </div>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script type="module">
+      import { loadHeaderFooter } from '/js/utils.mjs';
+      loadHeaderFooter();
+    </script>
+  </body>
+</html>

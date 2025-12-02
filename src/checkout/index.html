@@ -22,32 +22,34 @@
             
             <div class="form-group">
               <label for="fname">First Name *</label>
-              <input type="text" id="fname" name="fname" required>
+              <input type="text" id="fname" name="fname" required minlenght="2">
             </div>
             
             <div class="form-group">
               <label for="lname">Last Name *</label>
-              <input type="text" id="lname" name="lname" required>
+              <input type="text" id="lname" name="lname" required minlenght="2">
             </div>
             
             <div class="form-group">
               <label for="street">Street Address *</label>
-              <input type="text" id="street" name="street" required>
+              <input type="text" id="street" name="street" required minlenght="5">
             </div>
             
             <div class="form-group">
               <label for="city">City *</label>
-              <input type="text" id="city" name="city" required>
+              <input type="text" id="city" name="city" required minlenght="2">
             </div>
             
             <div class="form-group">
-              <label for="state">State *</label>
-              <input type="text" id="state" name="state" required maxlength="2">
+              <label for="state">State (2-letters code) *</label>
+              <input type="text" id="state" name="state" required
+              pattern="[A-Za-z]{2}" placeholder="ID" maxlength="2">
             </div>
             
             <div class="form-group">
               <label for="zip">Zip Code *</label>
-              <input type="text" id="zip" name="zip" required pattern="\d{5}">
+              <input type="text" id="zip" name="zip" required pattern="\d{5}" 
+              placeholder="83440" maxlength="5">
             </div>
             
             <h2>Payment Information</h2>
@@ -75,17 +77,20 @@
             <!-- Original payment fields (uncomment when done testing) -->
             <div class="form-group">
               <label for="cardNumber">Credit Card Number *</label>
-              <input type="text" id="cardNumber" name="cardNumber" required pattern="\d{16}">
+              <input type="text" id="cardNumber" name="cardNumber" required pattern="\d{16}" 
+              placeholder="1234123412341234" maxlength="16">
             </div>
             
             <div class="form-group">
               <label for="expiration">Expiration Date (MM/YY) *</label>
-              <input type="text" id="expiration" name="expiration" required pattern="\d{2}/\d{2}">
+              <input type="text" id="expiration" name="expiration" required pattern="\d{2}/\d{2}"
+              placeholder="08/24">
             </div>
             
             <div class="form-group">
               <label for="code">Security Code *</label>
-              <input type="text" id="code" name="code" required pattern="\d{3}">
+              <input type="text" id="code" name="code" required pattern="\d{3}"
+              placeholder="123" maxlength="3">
             </div>
             
             <button type="submit" class="checkout-btn">Place Order</button>

@@ -66,3 +66,44 @@ export function getParam(param) {
   const urlParams = new URLSearchParams(queryString);
   return urlParams.get(param);
 }
+
+
+
+export function alertMessage(message, scroll = true) {
+  // Remove any existing alerts
+  const existingAlert = document.querySelector('.alert');
+  if (existingAlert) {
+    existingAlert.remove();
+  }
+  
+  // Create alert element
+  const alert = document.createElement('div');
+  alert.classList.add('alert');
+  alert.innerHTML = `
+    <span>${message}</span>
+    <button class="alert-close">&times;</button>
+  `;
+  
+  // Add close functionality
+  alert.querySelector('.alert-close').addEventListener('click', function() {
+    alert.remove();
+  });
+  
+  // Add to top of main
+  const main = document.querySelector('main');
+  if (main) {
+    main.prepend(alert);
+  }
+  
+  // Scroll to top if requested
+  if (scroll) {
+    window.scrollTo(0, 0);
+  }
+  
+  // Auto-remove after 5 seconds
+  setTimeout(() => {
+    if (alert.parentNode) {
+      alert.remove();
+    }
+  }, 5000);
+}

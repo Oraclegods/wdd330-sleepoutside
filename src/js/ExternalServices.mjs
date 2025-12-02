@@ -1,10 +1,19 @@
 const baseURL = import.meta.env.VITE_SERVER_URL;
 
-function convertToJson(res) {
+async function convertToJson(res) {
+  // Always try to parse the response as JSON first
+  const jsonResponse = await res.json();
+  
   if (res.ok) {
-    return res.json();
+    return jsonResponse;
   } else {
-    throw new Error("Bad Response");
+    // Throw detailed error with server response
+    throw { 
+      name: 'servicesError', 
+      message: jsonResponse,
+      status: res.status,
+      statusText: res.statusText
+    };
   }
 }
 
@@ -14,15 +23,25 @@ export default class ExternalServices {
   }
 
   async getData(category) {
-    const response = await fetch(`${baseURL}products/search/${category}`);
-    const data = await convertToJson(response);
-    return data.Result;
+    try {
+      const response = await fetch(`${baseURL}products/search/${category}`);
+      const data = await convertToJson(response);
+      return data.Result;
+    } catch (error) {
+      console.error('Error fetching product data:', error);
+      throw error;
+    }
   }
 
   async findProductById(id) {
-    const response = await fetch(`${baseURL}product/${id}`);
-    const data = await convertToJson(response);
-    return data.Result;
+    try {
+      const response = await fetch(`${baseURL}product/${id}`);
+      const data = await convertToJson(response);
+      return data.Result;
+    } catch (error) {
+      console.error('Error fetching product by ID:', error);
+      throw error;
+    }
   }
 
   async checkout(payload) {
@@ -37,7 +56,14 @@ export default class ExternalServices {
     console.log('Sending checkout request to:', `${baseURL}checkout`);
     console.log('Payload:', payload);
     
-    const response = await fetch(`${baseURL}checkout`, options);
-    return convertToJson(response);
+    try {
+      const response = await fetch(`${baseURL}checkout`, options);
+      const data = await convertToJson(response);
+      console.log('Checkout successful:', data);
+      return data;
+    } catch (error) {
+      console.error('Checkout failed:', error);
+      throw error;
+    }
   }
 }
