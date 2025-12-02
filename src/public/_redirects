@@ -1,4 +1,0 @@
-# access folders without the trailing slash
-/checkout   /checkout/index.html   200
-/cart       /cart/index.html       200
-/product_listing   /product_listing/index.html   200
